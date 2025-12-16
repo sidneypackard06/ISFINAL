@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Guess the Ingredient Game</title>
+  <link rel="stylesheet" href="../styles/styles.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Georgia, serif;
+      background-color: rgb(91, 124, 153); /* slate blue */
+      padding-top: 100px; /* space for fixed header */
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #b22222; /* firebrick red */
+      color: white;
+      padding: 15px 20px;
+      text-align: left;
+      border-bottom: 4px solid #333;
+      z-index: 1000;
+    }
+
+    h1 {
+      margin: 0;
+    }
+
+    .game-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      border: 2px solid #b22222;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    button {
+      background-color: #b22222;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #8b1a1a;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .scoreboard {
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .timer {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #b22222;
+    }
+  </style>
+</head>
+<body>
+  <header class="header"> 
+    <h1>Sidney Packard</h1>
+    <h2><a href="index.html">Home</a></h2>
+    <h2><a href="resume.html">Resume</a></h2>
+  </header>
+
+  <main>
+    <div class="game-container">
+      <h2 id="question">Loading question...</h2>
+      <div id="options"></div>
+      <div class="result" id="result"></div>
+      <div class="scoreboard" id="scoreboard">Score: 0</div>
+      <div class="timer" id="timer"></div>
+      <div id="play-again"></div>
+    </div>
+  </main>
+
+  <script>
+    const questions = [
+      { q: "Which ingredient is essential for apple pie?", options: ["Flour", "Apples", "Ketchup"], answer: "Apples" },
+      { q: "What spice gives apple pie its warm flavor?", options: ["Cinnamon", "Paprika", "Curry Powder"], answer: "Cinnamon" },
+      { q: "Which ingredient helps the crust turn golden?", options: ["Egg wash", "Olive oil", "Milk"], answer: "Egg wash" },
+      { q: "What type of apples are best for pie?", options: ["Granny Smith", "Bananas", "Strawberries"], answer: "Granny Smith" },
+      { q: "What temperature is apple pie usually baked at?", options: ["220°C / 425°F", "100°C / 212°F", "300°C / 572°F"], answer: "220°C / 425°F" },
+      { q: "Which ingredient adds tartness to apple pie filling?", options: ["Lemon juice", "Soy sauce", "Vanilla"], answer: "Lemon juice" },
+      { q: "What fat is most commonly used in pie crust?", options: ["Butter", "Coconut oil", "Olive oil"], answer: "Butter" },
+      { q: "What kitchen tool is used to roll out pie dough?", options: ["Rolling pin", "Whisk", "Spatula"], answer: "Rolling pin" },
+      { q: "What should you do to prevent a soggy bottom crust?", options: ["Blind bake", "Add more sugar", "Freeze the pie"], answer: "Blind bake" },
+      { q: "Which spice is often paired with cinnamon in apple pie?", options: ["Nutmeg", "Cumin", "Turmeric"], answer: "Nutmeg" }
+    ];
+
+    let currentRound = 0;
+    let score = 0;
+    const totalRounds = 5;
+    let usedQuestions = [];
+    let timerInterval;
+
+    function loadQuestion() {
+      if (currentRound >= totalRounds) {
+        document.getElementById('question').textContent = "🎉 Game Over!";
+        document.getElementById('options').innerHTML = "";
+        document.getElementById('result').textContent = `Your final score: ${score} / ${totalRounds}`;
+        document.getElementById('timer').textContent = "";
+
+        // Show Play Again button
+        const playAgainDiv = document.getElementById('play-again');
+        playAgainDiv.innerHTML = "";
+        const btn = document.createElement('button');
+        btn.textContent = "Play Again 🔄";
+        btn.onclick = resetGame;
+        playAgainDiv.appendChild(btn);
+        return;
+      }
+
+      // Pick a random unused question
+      let available = questions.filter(q => !usedQuestions.includes(q.q));
+      const randomIndex = Math.floor(Math.random() * available.length);
+      const currentQuestion = available[randomIndex];
+      usedQuestions.push(currentQuestion.q);
+
+      document.getElementById('question').textContent = currentQuestion.q;
+
+      // Render options
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = "";
+      currentQuestion.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(opt, currentQuestion.answer);
+        optionsDiv.appendChild(btn);
+      });
+
+      // Start timer
+      startTimer(currentQuestion.answer);
+    }
+
+    function checkAnswer(choice, correct) {
+      clearInterval(timerInterval);
+      const result = document.getElementById('result');
+      if (choice === correct) {
+        const messages = ["Correct! 🎉", "Nice job! 🍏", "You nailed it! 🥧"];
+        result.textContent = messages[Math.floor(Math.random() * messages.length)];
+        result.style.color = "green";
+        score++;
+      } else {
+        const messages = ["Oops! Try again. 😅", "Not quite! ❌", "Better luck next time! 🍀"];
+        result.textContent = messages[Math.floor(Math.random() * messages.length)];
+        result.style.color = "red";
+      }
+      currentRound++;
+      document.getElementById('scoreboard').textContent = `Score: ${score}`;
+      setTimeout(() => {
+        result.textContent = "";
+        loadQuestion();
+      }, 1200);
+    }
+
+    function startTimer(correctAnswer) {
+      let timeLeft = 10;
+      const timer = document.getElementById('timer');
+      timer.textContent = `⏳ Time left: ${timeLeft}s`;
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timer.textContent = `⏳ Time left: ${timeLeft}s`;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          document.getElementById('result').textContent = `Time's up! The answer was: ${correctAnswer}`;
+          document.getElementById('result').style.color = "orange";
+          currentRound++;
+          setTimeout(() => {
+            document.getElementById('result').textContent = "";
+            loadQuestion();
+          }, 1500);
+        }
+      }, 1000);
+    }
+
+    function resetGame() {
+      currentRound = 0;
+      score = 0;
+      usedQuestions = [];
+      document.getElementById('scoreboard').textContent = "Score: 0";
+      document.getElementById('result').textContent = "";
+      document.getElementById('play-again').innerHTML = "";
+      loadQuestion();
+    }
+
+    // Start game
+    loadQuestion();
+  </script>
+</body>
+</html>

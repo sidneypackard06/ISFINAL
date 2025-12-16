@@ -1,0 +1,115 @@
+
+ body {
+      font-family: 'Georgia', serif;
+      background-color:rgb(91, 124, 153);
+      color: #333333;
+      margin: 0;
+      padding: 120px;
+    }
+
+    /* Fixed header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #b22222; /* firebrick red */
+      color: #fff;
+      align-items: center;
+      padding: 5px 15px;
+      z-index: 1000;
+      border-bottom: 4px solid #333333;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.8em;
+      font-family: 'Playfair Display', serif;
+      letter-spacing: 1px;
+    }
+
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 20px;
+    }
+html {
+  scroll-behavior: smooth;       /* optional: smooth scrolling */
+  scroll-padding-top: 115px;     /* offset equal to your fixed header height */
+}
+
+h2, p, ul, li {
+  scroll-margin-top: 115px;      /* ensures anchors stop below header */
+}
+
+    nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1em;
+      transition: color 0.3s ease;
+    }
+
+    nav ul li a:hover {
+      color: #333333;
+    }
+
+    /* Main content */
+    main {
+      max-width: 1000px;
+      margin: 120px auto 40px; /* extra top margin for fixed header */
+      padding: 20px;
+      background: #fff;
+      border: 3px solid #b22222;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+    h2 a {
+      color: white;   /* or any color name, hex, or rgb */
+    }
+
+    h2 a:hover {
+      color:#333333;     /* color when mouse hovers */
+    }
+
+    ul, ol {
+      margin: 20px 0;
+      padding-left: 25px;
+    }
+
+    li {
+      margin-bottom: 10px;
+      font-size: 1.1em;
+    }
+
+    .highlight {
+      background-color: #ffe4e1;
+      border-left: 6px solid #b22222;
+      padding: 15px;
+      margin: 20px 0;
+      font-style: italic;
+      font-size: 1.1em;
+    }
+
+    .footer {
+  position: fixed;       /* keeps it stuck to the bottom */
+  bottom: 0;             /* aligns at the very bottom */
+  left: 0;               /* starts at the left edge */
+  width: 100%;           /* spans full page width */
+  background-color: #b22222;  /* firebrick red */
+  color: #fff;           /* white text */
+  text-align: left;  
+  padding-left: 5px;         /* space inside footer */
+  font-family: 'Georgia', serif;
+}
+
+
+
+.resume-page footer {
+  display: block; /* show footer only on resume page */
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
